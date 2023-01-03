@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles2.css">
+    <script src="https://kit.fontawesome.com/aa06d7e2ac.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="banner">
+        <img src="/main_logo.png" class="mainlogos">
+    <h1 class="identify-title">Identification of Victim</h1>
+    </div>
+    <img id="imagePreview" style="height: 200px; padding:0;" />
+
+    <input id="imageUpload" type="file" />
+
+		<div id="label-container"></div>
+		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+		<script type="text/javascript">
+			// More API functions here:
+			// https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+			// the link to your model provided by Teachable Machine export panel
+			const URL = 'https://teachablemachine.withgoogle.com/models/1Gk-1qIme/';
+
+			let model, labelContainer, maxPredictions;
+
+			// Load the image model 
+			async function init() {
+				const modelURL = URL + 'model.json';
+				const metadataURL = URL + 'metadata.json';
+
+				// load the model and metadata
+				model = await tmImage.load(modelURL, metadataURL);
+				maxPredictions = model.getTotalClasses();
+
+				labelContainer = document.getElementById('label-container');
+				for (let i = 0; i < maxPredictions; i++) {
+					// and class labels
+					labelContainer.appendChild(document.createElement('div'));
+				}
+			}
+
+			async function predict() {
+				// predict can take in an image, video or canvas html element
+				var image = document.getElementById('imagePreview');
+				const prediction = await model.predict(image, false);
+				for (let i = 0; i < maxPredictions; i++) {
+					const classPrediction =
+						prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+					labelContainer.childNodes[i].innerHTML = classPrediction;
+				}
+			}
+		</script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script type="text/javascript">
+			function readURL(input) {
+				if (input.files && input.files[0]) {
+					var reader = new FileReader();
+					reader.onload = function (e) {
+						$('#imagePreview').attr('src', e.target.result);
+						// $('#imagePreview').css('background-image', 'url(' + e.target.result + ')');
+						$('#imagePreview').hide();
+						$('#imagePreview').fadeIn(650);
+					};
+					reader.readAsDataURL(input.files[0]);
+					init().then(() => {
+						predict();
+					});
+				}
+			}
+			$('#imageUpload').change(function () {
+				readURL(this);
+			});
+		</script>
+
+        <button><a href="/asklocation.html">Visit Live Maps Now <i class="fa-solid fa-map"></i> </a></button>
+
+        <h1 class="resource">Resources</h1>
+        <h4 class="resource2">Every table entry has an accessible website when clicked</h4>
+
+        <table id="res">
+            <tr>
+              <th>Stroke</th>
+              <th>Choking</th>
+              <th>Unconscious</th>
+            </tr>
+            <tr>
+              <td><a class="link" href="https://www.cdc.gov/stroke/about.htm">Resource 1</a></td>
+              <td><a class="link" href="https://www.mayoclinic.org/diseases-conditions/stroke/symptoms-causes/syc-20350113">Resource 2</a></td>
+              <td><a class="link" href="https://my.clevelandclinic.org/health/diseases/5601-stroke">Resource 3</a></td>
+            </tr>
+                <tr>
+                    <td><a class="link" href="https://www.mayoclinic.org/first-aid/first-aid-choking/basics/art-20056637">Resource 1</a></td>
+                    <td><a class="link" href="https://www.nhs.uk/common-health-questions/accidents-first-aid-and-treatments/what-should-i-do-if-someone-is-choking/">Resource 2</a></td>
+                    <td><a class="link" href="https://www.emedicinehealth.com/choking/article_em.htm">Resource 3</a></td>
+                </tr>
+                <tr>
+                    <td><a class="link" href="https://medlineplus.gov/ency/article/000022.htm">Resource 1</a></td>
+                    <td><a class="link" href="https://www.hatraining.com/first-aid/unconscious-casualty/">Resource 2</a></td>
+                    <td><a class="link" href="https://www.medicalnewstoday.com/articles/322872">Resource 3</a></td>
+                  </tr>
+        </table>
+</body>
+</html>
